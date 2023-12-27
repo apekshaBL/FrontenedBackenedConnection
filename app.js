@@ -3,6 +3,7 @@ const express=require("express");
 const app=express();
 let port=8080;
 const path=require("path");
+const Listing=require("./models/listing.js");
 
 //app.set("views",path.join(__dirname,"views"));
 //app.set("view engine","ejs");
@@ -29,4 +30,19 @@ app.listen(port,()=>{
 
 app.get("/",(req,res)=>{
     res.send("your port is working ");
+});
+
+app.get("/testlisting",async (req,res)=>{
+   let SampleListing=new Listing(
+    {
+        title:"My new Villa",
+        description:"By the Beach",
+        price:"1200",
+        location:"Calangute,Goa",
+        country:"India"
+
+    });
+        await SampleListing.save();
+        console.log("sample was saved");
+        res.send("successful sending");
 });
