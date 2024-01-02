@@ -40,6 +40,11 @@ app.get("/listings",async (req,res)=>{
     res.render("listings/index.ejs",{allListings});
     });
 
+//new route
+app.get("/listings/new",(req,res)=>{
+    res.render("listings/new.ejs",)
+})
+
 //show route
 app.get("/listings/:id",async(req,res)=>{
     let{id}=req.params;
@@ -47,6 +52,18 @@ app.get("/listings/:id",async(req,res)=>{
     res.render("listings/show.ejs",{listing});
     
 });
+
+//create route
+app.post("/listings",async(req,res)=>{
+    //let(title,description,image,price,country,location)
+    //let listing=req.body.listing;
+    const newListing=new Listing(req.body.listing);
+    await newListing.save();
+    res.redirect("/listings");
+})
+
+
+
 
 
 /* app.get("/testlisting",async (req,res)=>{
