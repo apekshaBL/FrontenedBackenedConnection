@@ -1,16 +1,17 @@
 //express setup
 const express=require("express");
 const app=express();
-let port=8080;
+let port=8000;
 const path=require("path");
 const Listing=require("./models/listing.js");
 
-//app.set("views",path.join(__dirname,"views"));
-//app.set("view engine","ejs");
+
+app.set("view engine","ejs");
+app.set("views",path.join(__dirname,"views"));
 
 //method override setup
-const MethodOveride=require("method-override");
-app.use(MethodOveride("_method"));
+//const MethodOveride=require("method-override");
+//app.use(MethodOveride("_method"));
 
 //mongoose setup
 const mongoose = require('mongoose');
@@ -31,8 +32,12 @@ app.listen(port,()=>{
 app.get("/",(req,res)=>{
     res.send("your port is working ");
 });
+app.get("/listings",async (req,res)=>{
+    const allListings=await Listing.find({});
+    res.render("listings/index.ejs",{allListings});
+    });
 
-app.get("/testlisting",async (req,res)=>{
+/* app.get("/testlisting",async (req,res)=>{
    let SampleListing=new Listing(
     {
         title:"My new Villa",
@@ -45,4 +50,5 @@ app.get("/testlisting",async (req,res)=>{
         await SampleListing.save();
         console.log("sample was saved");
         res.send("successful sending");
-});
+}); */
+
