@@ -1,8 +1,10 @@
 //express setup
+//import express from "express";
 const express=require("express");
 const app=express();
 let port=8000;
 const path=require("path");
+//import path from "path";
 const Listing=require("./models/listing.js");
 const MethodOveride=require("method-override");
 const ejsMate=require("ejs-mate");
@@ -12,22 +14,22 @@ app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended:true}));
 //method override setup
-app.use(MethodOveride("._method"));
+app.use(MethodOveride("_method"));
 app.engine("ejs",ejsMate);
+app.use(express.static(path.join(__dirname,"/public")));
 
 
 //mongoose setup
 const mongoose = require('mongoose');
 main().
 then((res)=>{
-    console.log("mongoose is working successfuly ")
+    console.log("mongoose is working successfuly ");
 })
 .catch(err => console.log(err));
 
 async function main() {
   await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
-}
-
+};
 app.listen(port,()=>{
     console.log("port is working");
 });
