@@ -4,16 +4,19 @@
 
             <h3>Edit your listings</h3>
             <br>
-            <form method="POST" action="/listings/<%=listing._id %>?_method=PUT">
+            <form method="POST" action="/listings/<%=listing._id %>?_method=PUT" class="needs-validation">
                  
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
-                    <input name="listing[title]" class="form-control" type="text" value="<%= listing.title %>">
+                    <input name="listing[title]" class="form-control" type="text" value="<%= listing.title %>" required>
+                    <div class="valid-feedback">Title looks good</div>
+                    
                 </div>
                 
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea name="listing[description]"class="form-control"><%=listing.description%></textarea>
+                    <textarea name="listing[description]"class="form-control" required><%=listing.description%></textarea>
+                    <div class="invalid-feedback">enter valid description</div>
                 </div>
                 
                 <div class="mb-3">
@@ -25,20 +28,23 @@
                 <div class="row">
 
                     <div class="mb-3 col-md-4">
-                        <label for="price"class="form-label">Price</label>
+                        <label for="price"class="form-label"required>Price</label>
                         <input name="listing[price]"class="form-control" value="<%=listing.price%>" type="number">
+                        <div class="invalid-feedback">enter valid price</div>
                     </div>
                     
                     <div class="mb-3 col-md-8">
-                        <label for="country" class="form-label">Country</label>
+                        <label for="country" class="form-label"required>Country</label>
                         <input name="listing[country]" class="form-control"value="<%=listing.country%>" type="text">
+                        <div class="invalid-feedback">enter valid country</div>
                     </div>
                     
                 </div>
                 
                 <div class="mb-3">
-                    <label for="location" class="form-label">Location</label>
+                    <label for="location" class="form-label"required>Location</label>
                     <input name="listing[location]" class="form-control"value="<%=listing.location%>" type="text">
+                    <div class="invalid-feedback">enter valid location</div>
                 </div>
             </form>
                 <button class="btn  btn-dark  edit-btn mt-3">Edit</button>

@@ -1,6 +1,5 @@
 <% layout("/layouts/boilerplate") %>
 <body>
-    
 
     <div class="row">
         <div class="col-8 offset-2" >
@@ -12,14 +11,15 @@
             <label for="title" class="form-label">Title</label>
             <input name="listing[title]" placeholder="enter title" type="text"class="form-control"
             required />
-
+            <div class="valid-feedback">Tittle looks good</div>
+            <div class="invalid-feedback">enter valid feedback</div>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <textarea name="listing[description]"  class="form-control" type="text" required ></textarea>
-            
+            <textarea name="listing[description]"  class="form-control" type="text" required >
+            </textarea>
+            <div class="invalid-feedback">enter short decription</div>
         </div>
-       
         <div class="mb-3">
             <label for="image" class="form-label">Image Link</label>
             <input name="listing[image]" class="form-control" placeholder="enter image URL/Link" type="text">
@@ -28,27 +28,22 @@
             <div class="mb-3  col-md-4">
                 <label for="price" class="form-label">Price</label>
                 <input name="listing[price]" placeholder="enter price" class="form-control" type="number" required>
+                <div class="invalid-feedback">Price should be enter valid</div>
             </div>
-            
             <div class="mb-3 col-md-8">
                 <label for="country" class="form-label">Country</label>
                 <input name="listing[country]" placeholder="enter your country name" class="form-control"type="text" required>
+                <div class="invalid-feedback">valid country should be enter</div>
             </div>
-
-
         </div>
-        
-       
-    
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>
             <input name="listing[location]" placeholder="enter location" class="form-control"  type="text"required>
+            <div class="invalid-feedback">Valid Location should be enter</div>
         </div>
-        
         <br>
         <button class="btn btn-dark add-btn">Add</button>
         <br><br>
-
     </form>
 </div>
 </div>
