@@ -21,6 +21,7 @@ app.use(express.static(path.join(__dirname,"/public")));
 
 //mongoose setup
 const mongoose = require('mongoose');
+const { nextTick } = require("process");
 main().
 then((res)=>{
     console.log("mongoose is working successfuly ");
@@ -34,6 +35,10 @@ async function main() {
 app.listen(port,()=>{
     console.log("port is working");
 });
+app.use((err,req,res,next)=>{ //error handler
+    res.send("something went wrong!");
+});
+
 
 app.get("/",(req,res)=>{
     res.send("your port is working ");
@@ -81,12 +86,18 @@ app.delete("/listings/:id",async(req,res)=>{
 
 //create route
 app.post("/listings",async(req,res)=>{
+    try{
+        const newListing=new Listing(req.body.listing);
+        await newListing.save();
+        res.redirect("/listings");
+    }catch(err){
+        next(err);
+    }
     //let(title,description,image,price,country,location)
     //let listing=req.body.listing;
-    const newListing=new Listing(req.body.listing);
-    await newListing.save();
-    res.redirect("/listings");
-})
+   
+
+});
 
 /* app.get("/testlisting",async (req,res)=>{
    let SampleListing=new Listing(
@@ -102,4 +113,3 @@ app.post("/listings",async(req,res)=>{
         console.log("sample was saved");
         res.send("successful sending");
 }); */
-
