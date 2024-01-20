@@ -2,13 +2,25 @@
 //import express from "express";
 const express=require("express");
 const app=express();
+const mongoose = require('mongoose');
+const Listing=require("./models/listing.js");
 let port=8000;
 const path=require("path");
 //import path from "path";
-const Listing=require("./models/listing.js");
 const MethodOveride=require("method-override");
 const ejsMate=require("ejs-mate");
+const wrapAsync = require("./utils/wrapAsync.js");
+const ExpressError=require("./utils/ExpressError.js");
 
+main().
+then((res)=>{
+    console.log("mongoose is working successfuly ");
+})
+.catch(err => console.log(err));
+
+async function main() {
+  await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
+};
 
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
@@ -20,24 +32,8 @@ app.use(express.static(path.join(__dirname,"/public")));
 
 
 //mongoose setup
-const mongoose = require('mongoose');
-const { nextTick } = require("process");
-main().
-then((res)=>{
-    console.log("mongoose is working successfuly ");
-})
-.catch(err => console.log(err));
 
-async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
-};
-
-app.listen(port,()=>{
-    console.log("port is working");
-});
-app.use((err,req,res,next)=>{ //error handler
-    res.send("something went wrong!");
-});
+//const { nextTick } = require("process");
 
 
 app.get("/",(req,res)=>{
@@ -45,10 +41,10 @@ app.get("/",(req,res)=>{
 });
 
 //index route
-app.get("/listings",async (req,res)=>{
+app.get("/listings",wrapAsync(async(req,res)=>{
     const allListings=await Listing.find({});
     res.render("listings/index.ejs",{allListings});
-    });
+    }));
 
 //new route
 app.get("/listings/new",(req,res)=>{
@@ -56,48 +52,52 @@ app.get("/listings/new",(req,res)=>{
 })
 
 //show route
-app.get("/listings/:id",async(req,res)=>{
+app.get("/listings/:id",wrapAsync(async(req,res)=>{
     let{id}=req.params;
     const listing=await Listing.findById(id);
     res.render("listings/show.ejs",{listing});
-});
+}));
+
+//create route
+app.post("/listings",wrapAsync(async(req,res,next)=>{
+    if(!req.body.listing){
+     throw new ExpressError(480,"send valid data for listings")
+    }
+     const newListing=new Listing(req.body.listing);
+     await newListing.save();
+     res.redirect("/listings");
+
+ })
+ //let(title,description,image,price,country,location)
+ //let listing=req.body.listing;
+);
+
 
 //edit route
-app.get("/listings/:id/edit",async(req,res)=>{
+app.get("/listings/:id/edit",wrapAsync(async(req,res)=>{
     let{id}=req.params;
     const listing=await Listing.findById(id);
     res.render("listings/edit.ejs",{listing});
-});
+}));
 
 //update route
-app.put("/listings/:id",async (req,res)=>{
+app.put("/listings/:id",wrapAsync(async (req,res)=>{
+    if(!req.body.listing){
+        throw new ExpressError(480,"send valid data for listings")
+       }
     let{id}=req.params;
     await Listing.findByIdAndUpdate(id,{...req.body.listing});
     res.redirect(`/listings/${id}`);
-});
+}));
 
 //delete route
-app.delete("/listings/:id",async(req,res)=>{
+app.delete("/listings/:id",wrapAsync(async(req,res)=>{
     let {id}=req.params;
     let deletedListing=await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
     res.redirect("/listings");
-});
+}));
 
-//create route
-app.post("/listings",async(req,res)=>{
-    try{
-        const newListing=new Listing(req.body.listing);
-        await newListing.save();
-        res.redirect("/listings");
-    }catch(err){
-        next(err);
-    }
-    //let(title,description,image,price,country,location)
-    //let listing=req.body.listing;
-   
-
-});
 
 /* app.get("/testlisting",async (req,res)=>{
    let SampleListing=new Listing(
@@ -113,3 +113,16 @@ app.post("/listings",async(req,res)=>{
         console.log("sample was saved");
         res.send("successful sending");
 }); */
+app.all("*",(req,res,next)=>{
+    next(new ExpressError(404,"Page not found !")); //if not matched to all above than this is consider
+});
+
+app.use((err,req,res,next)=>{     //error handler
+    let{statusCode=500,message="something went wrong"}=err;
+    res.status(statusCode).send(message);
+});
+
+app.listen(port,()=>{
+    console.log("port is working");
+});
+
