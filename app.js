@@ -119,7 +119,8 @@ app.all("*",(req,res,next)=>{
 
 app.use((err,req,res,next)=>{     //error handler
     let{statusCode=500,message="something went wrong"}=err;
-    res.status(statusCode).send(message);
+    //res.status(statusCode).send(message);
+    res.status(statusCode).render("error.ejs",{message});
 });
 
 app.listen(port,()=>{
